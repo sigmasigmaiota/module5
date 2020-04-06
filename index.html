@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <style>
+            h2 {
+                font: 16px sans-serif;
+                font-weight: bold;
+            }
+            h3 {
+                font: 12px sans-serif;
+                font-weight: bold;
+            }
+            table {
+                width: auto;
+                text-align: center;
+                border-collapse: collapse;
+                border: 2px black solid;
+                font: 12px sans-serif;
+            }
+            td {
+                border: 1px black solid;
+                padding: 5px;
+            }
+            #tablePrint, #entry {
+                margin-right: 2px;
+                float: left;
+            }
+            .child_div_1 {
+                float: left;
+                margin-right: 5px;
+            }
+            .center-div {
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                left: 40%;
+                margin: auto;
+            }
+            #response {
+                padding-top: 50px;
+                font: 16px sans-serif;
+            }
+            #myText {
+                margin-left: 5%;
+            }
+            #entry, #entry2 {
+                margin-right: 10px;
+                margin-left: 5%;
+                float: left;
+            }
+            .one {
+                float: right;
+                margin-right: 30px;
+            }
+            #response3, #response2 {
+                overflow-wrap: break-word;
+                position:absolute;
+                padding-top: 0px;
+                font: 12px sans-serif;
+                float: left;
+                margin-left:30px;
+                margin-right: 60%;
+            }
+            #myText2, #myNum {
+                margin-left: 10px;
+            }
+        </style>
+<head>
+<body>
+<div id="entry2">
+    <h2>Part 1</h2>
+    <h3>Please type text below.</h3>
+    <input type="text" id="myText2">
+    <div class="one">
+        <div id="response3"></div>
+    </div>
+    <div></div>
+    <h3>Please input a number below.</h3>
+    <input type="number" id="myNum">
+    <div class="one">
+        <div id="response2"></div>
+    </div>
+
+</div>
+<div class="center-div">
+<div id="tablePrint" style="margin-left: 30px;"> </div>
+<div id="entry">
+    <h2>Part 2</h2>
+    <h3>Please enter the name of a President:</h3>
+    <input type="text" id="myText">
+    <div id="response"></div>
+
+</div>
+</div>
+<script src="https://d3js.org/d3.v5.js"></script>
+
+<script type="text/javascript"charset="utf-8">
+url = "https://raw.githubusercontent.com/charleyferrari/CUNY_DATA_608/master/module5/data/presidents.csv"
+
+var dataset;  //Global var
+
+var myTable= "<table><tr><td style='width: 100px; color: red;font-weight: bold;'>Name</td>";
+    myTable+= "<td style='width: 100px; color: red; text-align: right;font-weight: bold;text-align:center'>Height</td>";
+    myTable+="<td style='width: 100px; color: red; text-align: right;font-weight: bold;text-align:center'>Weight</td></tr>";
+
+d3.dsv(",", url, function(d) {
+  return {
+    //year: new Date(+d.Year, 0, 1), // convert "Year" column to Date
+    Name: d.Name,
+    Height: +d.Height,
+    Weight: +d.Weight // convert "Length" column to number
+  };
+}).then(function(data) {
+   
+   for (var i=0;i<data.length;i++) {
+        console.log(data[i].Name+" was "+data[i].Height+" tall and weighs "+data[i].Weight);
+        myTable+="<tr><td style='width: 100px;'>" + data[i].Name + "</td>";
+        //data[i] = data[i].toFixed(3);
+        myTable+="<td style='width: 100px; text-align: center;'>" + data[i].Height + " in</td>";
+        myTable+="<td style='width: 100px; text-align: center;'>" + data[i].Weight + " lbs</td></tr>";
+    }
+    myTable+="</table>";
+    document.getElementById('tablePrint').innerHTML = myTable;
+    dataset = data;
+    
+
+});
+
+window.onload = function(){
+
+const selectElement = document.getElementById('myText');
+
+selectElement.addEventListener('input', (event) => {
+    myValue = selectElement.value;
+
+    var nameArray = []
+    for (var i=0;i<dataset.length;i++) {
+        
+        var tempName = dataset[i].Name;
+        nameArray.push(tempName)
+    }
+
+    console.log(nameArray.indexOf(myValue));
+    indexName = nameArray.indexOf(myValue);
+    if (indexName>=0){
+        ht = dataset[indexName].Height;
+        wt = dataset[indexName].Weight;
+        fullResponse = 'President: '+myValue+'<br><br>Height: '+ht+' in<br><br>Weight: '+wt+' lbs';
+        document.getElementById('response').innerHTML = fullResponse;
+    }else{
+        fullResponse = '<span style="color:DarkRed;"><i>Please enter a name from the table.</i></span>';
+        document.getElementById('response').innerHTML = fullResponse;
+    }
+
+});
+
+const selectElement2 = document.getElementById('myText2');
+
+selectElement2.addEventListener('input', (event3) => {
+
+    myValue2 = selectElement2.value;
+        
+    var splitWord = myValue2.split("");
+    var revWord = splitWord.reverse();
+    var joinWord = revWord.join("");
+
+    fullResponse = 'The text reversed: '+joinWord;
+    document.getElementById('response3').innerHTML = fullResponse;
+
+});
+
+const selectNum = document.getElementById('myNum');
+
+selectNum.addEventListener('input', (event2) => {
+
+    document.getElementById('response2').innerHTML = "";
+
+    myNum = selectNum.value;
+        
+    multArray = [];
+    for (var i=2; i<22; i++) {
+        var multVal = myNum*i;
+        multArray.push(multVal);
+    }
+
+    var arrayLength = multArray.length;
+    var numTable = document.createElement('table');
+
+    for (row = 0; row < 5; row++){
+        tr = document.createElement('tr');
+
+        for (var k = 0, tr, td; k < 4; k++) {
+            
+            td = document.createElement('td');
+            td.appendChild(document.createTextNode(multArray[(row*4)+k]));
+            tr.appendChild(td);
+            
+        }
+        numTable.appendChild(tr);
+    }
+    document.getElementById('response2').appendChild(numTable);
+
+});
+
+
+
+
+};
+
+</script>
+</body>
+</html>
+
